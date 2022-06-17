@@ -1,6 +1,6 @@
-package com.billy.disambiguation;
+package com.joe.parallelSteinerTree;
 
-import static com.billy.disambiguation.Utils.loadFeatures;
+import static com.joe.parallelSteinerTree.Utils.loadFeatures;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

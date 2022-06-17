@@ -1,4 +1,4 @@
-package com.billy.disambiguation;
+package com.joe.parallelSteinerTree;
 
 public class Token
 {

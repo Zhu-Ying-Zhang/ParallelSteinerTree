@@ -1,4 +1,4 @@
-package com.billy.disambiguation;
+package com.joe.parallelSteinerTree;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
