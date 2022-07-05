@@ -4,20 +4,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class ReadOrGraph {
 
 	public static void main(String[] args) {
-		try (Stream<Path> paths = Files.walk(Paths.get("/Users/zhuyingzhang/Work/StrathclydeLife/CS957/Steiner/data/"))) {
+		try (Stream<Path> paths = Files.walk(Paths.get("/Users/zhuyingzhang/Work/StrathclydeLife/CS957/Steiner/data/SteinerB"))) {
 			paths.filter(Files::isRegularFile).sorted().forEach(filePathWithName -> {
+				Algorithm a = null;
+				OrGraph orGraph = null;
+				Set<Node> result = null;
 				try {
 					long startTime = System.currentTimeMillis();
-					OrGraph orGraph = Utils.loadOrGraph(filePathWithName.toString());
+					orGraph = Utils.loadOrGraph(filePathWithName.toString());
 //					System.out.println("=== GRAPH ===");
 //					System.out.println(orGraph.getGraph());
 					System.out.println("=== "+filePathWithName.getFileName() + " QUERY ===");
 					System.out.println(orGraph.getQuery());
+					a = new Algorithm(orGraph.getGraph());
+					result = a.query(orGraph.getQuery());
 					long endTime = System.currentTimeMillis();
 					System.out.println(endTime - startTime);
 				} catch (IOException e) {
