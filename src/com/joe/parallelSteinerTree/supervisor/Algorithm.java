@@ -89,8 +89,12 @@ public class Algorithm {
             // Confuse part!!!!!
             // not sure how to modify this part.
             // if the init q is [29, 20]
-            // and the change flag is false the q won't be extend. In other words, only [29, 20]
-            // but if I extend the q, I don't know how to compare two nodes.
+            // 1). and the change flag is false the q won't be enqueue. In other words, only [29, 20].
+            // 2). However, if I enqueue the q, I don't know how to compare two nodes.
+            // Because send method have three checking condition
+            // 1. mergeIntoCandidate --> Seems compare token --> I try to remove it but it will cause issue.
+            // 2. weightLessThanBest --> compare base on candidate
+            // 3. broadcast --> enqueue to q.
             if (changed) {
 
             } else {
