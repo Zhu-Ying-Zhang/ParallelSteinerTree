@@ -1,22 +1,19 @@
-package com.joe.parallelSteinerTree;
+package com.joe.parallelSteinerTree.supervisor;
 
-public class Token
-{
+public class Token {
     private final Node origin;
     
     private final double weight;
     
     private final Node direction;
     
-    public Token(Node origin, double weight, Node direction)
-    {
+    public Token(Node origin, double weight, Node direction) {
         this.origin = origin;
         this.weight = weight;
         this.direction = direction;
     }
 
-    public Node getOrigin()
-    {
+    public Node getOrigin() {
         return origin;
     }
     
@@ -30,8 +27,7 @@ public class Token
         return direction;
     }
     
-    public String toString()
-    {
+    public String toString() {
         return ((origin == null) ? "null" : origin.getName()) + "," +
         weight + "," +
         ((direction == null) ? "null" : direction.getName());

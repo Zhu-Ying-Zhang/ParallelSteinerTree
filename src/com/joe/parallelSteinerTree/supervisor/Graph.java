@@ -1,4 +1,4 @@
-package com.joe.parallelSteinerTree;
+package com.joe.parallelSteinerTree.supervisor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,14 @@ public class Graph {
 	public Graph() {
 		nodes = new HashMap<>();
 	}
-	
+
+	public int[][] costMatrix;
+
+	public Graph(int nodeCount) {
+		this.costMatrix = new int[nodeCount+1][nodeCount+1];
+		nodes = new HashMap<>();
+	}
+
 	public Node getNode(String nodeName) {
 		return nodes.get(nodeName);
 	}

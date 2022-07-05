@@ -1,6 +1,6 @@
-package com.joe.parallelSteinerTree;
+package com.joe.parallelSteinerTree.supervisor;
 
-import static com.joe.parallelSteinerTree.Utils.loadFeatures;
+import static com.joe.parallelSteinerTree.supervisor.Utils.loadFeatures;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

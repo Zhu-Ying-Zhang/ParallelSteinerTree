@@ -1,4 +1,4 @@
-package com.joe.parallelSteinerTree;
+package com.joe.parallelSteinerTree.supervisor;
 
 import java.util.Set;
 

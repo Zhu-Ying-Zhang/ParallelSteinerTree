@@ -1,20 +1,18 @@
-package com.joe.parallelSteinerTree;
+package com.joe.parallelSteinerTree.supervisor;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Algorithm {
 	private Graph graph;
 
     private int nodesInQuery;
-    
+
     private double bestWeight;
-    
+
     private Node bestNode = null;
-    
-    private Queue<Message> q = new LinkedList<Message>();
+
+    private ConcurrentLinkedQueue<Message> q = new ConcurrentLinkedQueue<>();
 
 	public Algorithm(Graph graph) {
 		this.graph = graph;
@@ -28,67 +26,109 @@ public class Algorithm {
         nodesInQuery = -1;
 	}
 
-	
-    public Set<Node> query(Set<String> nodeNames)
-    {
+
+    public Set<Node> query(Set<String> nodeNames) {
         reset();
         nodesInQuery = nodeNames.size();
-        for (String nodeName : nodeNames)
-        {
+//        System.out.println("Algorithm - query: " + nodeNames.size());
+        for (String nodeName : nodeNames) {
             Node node = graph.getNode(nodeName);
+//            System.out.println("Algorithm - query - node: " + node.toString());
             Token t = new Token(node, 0.0, null);
+//            System.out.println("Algorithm - Token: " + t.toString());
             Message m = new Message(node, 0.0, t);
+//            System.out.println("Algorithm - Message: " + m.toString());
             q.add(m); // q is unbounded, so no need to use put
+//            System.out.println("Algorithm - q: " + q.toString());
         }
         processQueue();
         return getResultNodes(bestNode);
     }
 
-    private Set<Node> getResultNodes(Node bestNode)
-    {
-        if (bestNode == null)
-        {
+    private Set<Node> getResultNodes(Node bestNode) {
+//        System.out.println("bestNode: " + bestNode);
+        if (bestNode == null) {
             return null;
         }
-        else
-        {
-            Set<Node> results = new HashSet<Node>();
+        else {
+            Set<Node> results = new HashSet<>();
             bestNode.followAllTrails(results);
             return results;
         }
     }
 
-    private void processQueue()
-    {
-        while (!q.isEmpty())
-        {
+    private void processQueueOld() {
+        while (!q.isEmpty()) {
+            System.out.println("Process Queue Size: " + q.size());
+            System.out.println("Process Queue: " + q.toString());
             Message m = q.remove();
+//            processQueue.add(m);
+//            System.out.println("processQueue: " + processQueue.toString());
             m.getDestination().send(m, this);
         }
     }
-    
+
+    private void processQueue() {
+        while (!q.isEmpty()) {
+            boolean changed = false;
+            Node tempNode;
+            System.out.println("Process Queue Size: " + q.size());
+            System.out.println("Process Queue: " + q.toString());
+            Message m = q.remove();
+            Node d = m.getDestination();
+            for (Message msg : q) {
+                if (msg.getDestination() == d) {
+                    changed = true;
+                    tempNode = msg.getDestination();
+                    q.remove(msg);
+                }
+            }
+
+            System.out.println("Process Queue: " + q.toString());
+            //            loop looking for == d
+            if (changed) {
+
+            } else {
+                m.getDestination().send(m, this);
+            }
+        }
+    }
+
     /**
      * Called by Nodes to put messages on the queue.
      * @param m The message put on the queue by the Node.
      */
-    public void enqueue(Message m)
-    {
-    	q.add(m);
+    public void enqueue(Message m) {
+        q.add(m);
     }
 
-	public boolean weightLessThanBest(double totalWeight, int candidateSize, Node node)
-	{
+//    public boolean checkProcessNode(Link l) {
+//        Iterator<Message> it = processQueue.iterator();
+//        boolean result = false;
+//        while (it.hasNext()) {
+//            Message m = it.next();
+//            for(int i = 0; i < m.size(); i++) {
+//                Token t = m.getTokens().get(i);
+//                if (l.getDestination().equals(t.getOrigin()) && l.getSource().equals(t.getDirection())) {
+////                    System.out.println("SAME SAME!!!");
+//                    result = true;
+//                }
+//            }
+//        }
+//        return result;
+//    }
+
+	public boolean weightLessThanBest(double totalWeight, int candidateSize, Node node) {
 		boolean result = false;
-		if (totalWeight < bestWeight)
-		{
+		if (totalWeight < bestWeight) {
 			result = true;
-			if (candidateSize == nodesInQuery)
-			{
-	            //System.out.print("S");
+			if (candidateSize == nodesInQuery) {
 				bestNode = node;
 				bestWeight = totalWeight;
 			}
 		}
+//        System.out.println("weightLessThanBest bestNode: " + bestNode);
+//        System.out.println("weightLessThanBest bestWeight: " + bestWeight);
 		return result;
 	}
 }

@@ -1,26 +1,23 @@
-package com.joe.parallelSteinerTree;
+package com.joe.parallelSteinerTree.supervisor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Message implements Iterable<Token>
-{
+public class Message implements Iterable<Token> {
 	private final Node destination;
     
     private final double weight;
     
     private final List<Token> tokens = new ArrayList<Token>();
 
-    public Message(Node destination, double weight, Token token)
-    {
+    public Message(Node destination, double weight, Token token) {
     	this.destination = destination;
     	this.weight = weight;
     	tokens.add(token);
     }
     
-    public Message(Node destination, double weight, List<Token> tokens)
-    {
+    public Message(Node destination, double weight, List<Token> tokens) {
     	this.destination = destination;
     	this.weight = weight;
     	this.tokens.addAll(tokens);
@@ -44,21 +41,16 @@ public class Message implements Iterable<Token>
 	{
 		return tokens.iterator();
 	}
-
-//    public void send(DisambiguateAmericanFootballTeams algorithm)
-//    {
-//        destination.process(this, algorithm);
-//    }
     
-    public String toString()
-    {
+    public String toString() {
         String result = "Message to " + destination.getName();
         result += "\nWeight = " + weight;
-        for (Token t : tokens)
-        {
+        for (Token t : tokens) {
             result += "\n" + t;
         }
         result += "\n";
         return result;
     }
+
+    public List<Token> getTokens() {return this.tokens;}
 }

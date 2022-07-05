@@ -1,15 +1,13 @@
-package com.joe.parallelSteinerTree;
+package com.joe.parallelSteinerTree.supervisor;
 
-public class Link
-{
+public class Link {
     private final double weight;
     
     private final Node source;
     
     private final Node destination;
     
-    public Link(Node source, Node destination, double weight)
-    {
+    public Link(Node source, Node destination, double weight) {
         this.source = source;
         this.destination = destination;
         this.weight = weight;
@@ -25,8 +23,7 @@ public class Link
         return source;
     }
     
-    public Node getDestination()
-    {
+    public Node getDestination() {
         return destination;
     }
     

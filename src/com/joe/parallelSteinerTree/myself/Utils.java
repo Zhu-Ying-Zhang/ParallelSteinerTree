@@ -1,4 +1,7 @@
-package com.joe.parallelSteinerTree.supervisor;
+package com.joe.parallelSteinerTree.myself;
+
+import com.joe.parallelSteinerTree.supervisor.Graph;
+import com.joe.parallelSteinerTree.supervisor.OrGraph;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -83,56 +86,5 @@ public class Utils {
 		}
 		return new OrGraph(graph, query);
 	}
-
-	public static OrGraph loadOrGraph(String filename, boolean isNew) throws IOException {
-		Graph graph = null;
-		Set<String> query = new HashSet<>();
-		try
-		{
-			Reader.init(filename);
-
-
-			Reader.next();						//SECTION
-			Reader.next();						//Graph
-			Reader.next();
-			int nodeCount = Reader.nextInt();
-			Reader.next();                      //Edges
-			int linkCount = Reader.nextInt();
-			graph = new Graph(nodeCount);
-			// Get the links
-			for (int i = 0; i < linkCount; i++) {
-				Reader.next();                   // E
-				String a = Reader.next();
-				String b = Reader.next();
-				String c = Reader.next();
-				graph.addLink(a, b, Double.parseDouble(c));
-				graph.costMatrix[Integer.parseInt(a)][Integer.parseInt(b)] = Integer.parseInt(c);
-				graph.costMatrix[Integer.parseInt(b)][Integer.parseInt(a)] = Integer.parseInt(c);
-			}
-			System.out.println("Node Count: " + graph.nodeCount());
-			if (graph.nodeCount() != nodeCount) {
-				throw new StreamCorruptedException("Unexpected node count");
-			}
-
-			// Get the query size
-			Reader.next();						// END
-			Reader.next();						// SECTION
-			Reader.next();						// Terminals
-			Reader.next();						// Terminals
-			int querySize = Reader.nextInt();
-
-			// Get the query
-			for (int i = 0; i < querySize; i++) {
-				Reader.next();                   // T
-				query.add(Reader.next());
-			}
-			System.out.println("Query Count: " + query.size());
-			if (query.size() != querySize) {
-				throw new StreamCorruptedException("Unexpected query size");
-			}
-		} finally {
-			Reader.close();
-		}
-		return new OrGraph(graph, query);
-	}
+	
 }

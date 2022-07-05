@@ -1,4 +1,4 @@
-package com.joe.parallelSteinerTree;
+package com.joe.parallelSteinerTree.supervisor;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,8 +9,8 @@ import java.util.stream.Stream;
 
 public class ReadOrGraph {
 
-	public static void main(String[] args) {
-		try (Stream<Path> paths = Files.walk(Paths.get("/Users/zhuyingzhang/Work/StrathclydeLife/CS957/Steiner/data/SteinerB"))) {
+	public static void main(String[] args) throws IOException {
+		try (Stream<Path> paths = Files.walk(Paths.get("/Users/zhuyingzhang/Work/StrathclydeLife/CS957/Steiner/data/SteinerB/steinb1.txt"))) {
 			paths.filter(Files::isRegularFile).sorted().forEach(filePathWithName -> {
 				Algorithm a = null;
 				OrGraph orGraph = null;
@@ -20,12 +20,14 @@ public class ReadOrGraph {
 					orGraph = Utils.loadOrGraph(filePathWithName.toString());
 //					System.out.println("=== GRAPH ===");
 //					System.out.println(orGraph.getGraph());
-					System.out.println("=== "+filePathWithName.getFileName() + " QUERY ===");
+					System.out.println("=== " + filePathWithName.getFileName() + " QUERY ===");
 					System.out.println(orGraph.getQuery());
 					a = new Algorithm(orGraph.getGraph());
 					result = a.query(orGraph.getQuery());
+					System.out.println("=== " + filePathWithName.getFileName() + " RESULT ===");
+					System.out.println(result);
 					long endTime = System.currentTimeMillis();
-					System.out.println(endTime - startTime);
+					System.out.println("Runtime(second): " + (double) (endTime - startTime) / 1000);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -45,5 +47,4 @@ public class ReadOrGraph {
 			e.printStackTrace();
 		}
 	}
-
 }
