@@ -71,11 +71,12 @@ public class Algorithm {
     private void processQueue() {
         while (!q.isEmpty()) {
             boolean changed = false;
-            Node tempNode;
+            Node tempNode; // This is for comparing the weight.
             System.out.println("Process Queue Size: " + q.size());
             System.out.println("Process Queue: " + q.toString());
             Message m = q.remove();
             Node d = m.getDestination();
+            //            loop looking for == d
             for (Message msg : q) {
                 if (msg.getDestination() == d) {
                     changed = true;
@@ -85,7 +86,11 @@ public class Algorithm {
             }
 
             System.out.println("Process Queue: " + q.toString());
-            //            loop looking for == d
+            // Confuse part!!!!!
+            // not sure how to modify this part.
+            // if the init q is [29, 20]
+            // and the change flag is false the q won't be extend. In other words, only [29, 20]
+            // but if I extend the q, I don't know how to compare two nodes.
             if (changed) {
 
             } else {
