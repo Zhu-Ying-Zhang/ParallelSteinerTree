@@ -76,16 +76,14 @@ public class Algorithm {
             System.out.println("Process Queue: " + q.toString());
             Message m = q.remove();
             Node d = m.getDestination();
-            //            loop looking for == d
+            // loop looking for == d
             for (Message msg : q) {
                 if (msg.getDestination() == d) {
                     changed = true;
-                    tempNode = msg.getDestination();
+                    tempNode = msg.getDestination(); // saving the node we want to compare
                     q.remove(msg);
                 }
             }
-
-            System.out.println("Process Queue: " + q.toString());
             // Confuse part!!!!!
             // not sure how to modify this part.
             // if the init q is [29, 20]
