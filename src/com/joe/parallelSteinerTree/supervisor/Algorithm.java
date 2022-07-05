@@ -76,11 +76,15 @@ public class Algorithm {
             System.out.println("Process Queue: " + q.toString());
             Message m = q.remove();
             Node d = m.getDestination();
+            // if (d.anyChange(m))
             // loop looking for == d
+            // foreach q
             for (Message msg : q) {
+                // if same
                 if (msg.getDestination() == d) {
                     changed = true;
                     tempNode = msg.getDestination(); // saving the node we want to compare
+                    // remove q
                     q.remove(msg);
                 }
             }
@@ -94,9 +98,9 @@ public class Algorithm {
             // 2. weightLessThanBest --> compare base on candidate
             // 3. broadcast --> enqueue to q.
             if (changed) {
-
+                // not sure.... if change is true, then update q? But it will cause only [29, 20] won't be enqueue new message.
             } else {
-                m.getDestination().send(m, this);
+                m.getDestination().send(m, this); // not sure....
             }
         }
     }
