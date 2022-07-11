@@ -46,7 +46,7 @@ public class Algorithm {
     }
 
     private Set<Node> getResultNodes(Node bestNode) {
-//        System.out.println("bestNode: " + bestNode);
+        System.out.println("best: " + bestNode);
         if (bestNode == null) {
             return null;
         }
@@ -70,24 +70,13 @@ public class Algorithm {
 
     private void processQueue() {
         while (!q.isEmpty()) {
-            boolean changed = false;
-            Node tempNode; // This is for comparing the weight.
             System.out.println("Process Queue Size: " + q.size());
-            System.out.println("Process Queue: " + q.toString());
-            Message m = q.remove();
-            Node d = m.getDestination();
+//            System.out.println("Process Queue: " + q.toString());
+            Message m = q.peek();
             // if (d.anyChange(m))
             // loop looking for == d
             // foreach q
-            for (Message msg : q) {
-                // if same
-                if (msg.getDestination() == d) {
-                    changed = true;
-                    tempNode = msg.getDestination(); // saving the node we want to compare
-                    // remove q
-                    q.remove(msg);
-                }
-            }
+
             // Confuse part!!!!!
             // not sure how to modify this part.
             // if the init q is [29, 20]
@@ -97,11 +86,9 @@ public class Algorithm {
             // 1. mergeIntoCandidate --> Seems compare token --> I try to remove it but it will cause issue.
             // 2. weightLessThanBest --> compare base on candidate
             // 3. broadcast --> enqueue to q.
-            if (changed) {
-                // not sure.... if change is true, then update q? But it will cause only [29, 20] won't be enqueue new message.
-            } else {
-                m.getDestination().send(m, this); // not sure....
-            }
+
+            // not sure.... if change is true, then update q? But it will cause only [29, 20] won't be enqueue new message.
+            m.getDestination().send(m, this); // not sure....
         }
     }
 
@@ -113,23 +100,27 @@ public class Algorithm {
         q.add(m);
     }
 
-//    public boolean checkProcessNode(Link l) {
-//        Iterator<Message> it = processQueue.iterator();
-//        boolean result = false;
-//        while (it.hasNext()) {
-//            Message m = it.next();
-//            for(int i = 0; i < m.size(); i++) {
-//                Token t = m.getTokens().get(i);
-//                if (l.getDestination().equals(t.getOrigin()) && l.getSource().equals(t.getDirection())) {
-////                    System.out.println("SAME SAME!!!");
-//                    result = true;
-//                }
-//            }
-//        }
-//        return result;
-//    }
+    public void dequeue(Message m) {
+        q.remove(m);
+    }
 
-	public boolean weightLessThanBest(double totalWeight, int candidateSize, Node node) {
+    public boolean checkQueueForSameNodeHasChange(Message m) {
+        boolean changed = false;
+        int count = 0;
+        for (Message msg : q) {
+            if (msg.getDestination() == m.getDestination()) {
+                count++;
+                if (count>=2) changed = true;
+            }
+        }
+        return changed;
+    }
+
+    public ConcurrentLinkedQueue<Message> getQ() {
+        return q;
+    }
+
+    public boolean weightLessThanBest(double totalWeight, int candidateSize, Node node) {
 		boolean result = false;
 		if (totalWeight < bestWeight) {
 			result = true;

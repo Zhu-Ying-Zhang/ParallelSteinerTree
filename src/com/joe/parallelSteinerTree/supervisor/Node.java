@@ -18,7 +18,7 @@ public class Node {
     {
         return name;
     }
-    
+
     public void addLink(Node n, double w) {
         Link l = new Link(this, n, w);
         neighbours.add(l);
@@ -56,7 +56,7 @@ public class Node {
     	// This should provide fewer messages, more memory locality and
     	// fewer context switches.
     	//
-        if (mergeMessageIntoCandidate(m)) {
+        if (mergeMessageIntoCandidate(m, algorithm)) {
         	//
         	// The message changed this node, so continue.
         	//
@@ -66,11 +66,9 @@ public class Node {
         		// Our solution is good, so
         		// broadcast our candidate to our neighbors.
         		//
-
-        		List<Token> tokens = createTokenList();
+                List<Token> tokens = createTokenList();
 
         		for (Link l : neighbours) {
-//        		    if (!algorithm.checkProcessNode(l))
         		    algorithm.enqueue(new Message(l.getDestination(), l.getWeight(), tokens));
         		}
         	}
@@ -80,40 +78,69 @@ public class Node {
 	private List<Token> createTokenList() {
 		List<Token> tokens = new ArrayList<>();
 		for (Node n : candidate.keySet()) {
-//            System.out.println("createTokenList node: " + n);
 			Token myToken = candidate.get(n);
 			Token messageToken = new Token(n, myToken.getWeight(), this);
 			tokens.add(messageToken);
 		}
-//        System.out.println("createTokenList tokens: " + Arrays.toString(tokens.toArray()));
 		return tokens;
 	}
 
-	private boolean mergeMessageIntoCandidate(Message m) {
+	private boolean mergeMessageIntoCandidate(Message m, Algorithm algorithm) {
 		//
         // First merge the new tokens into our candidate.
         //
-//        System.out.println("mergeMessageIntoCandidate weight: " + m.getWeight());
-//        System.out.println("mergeMessageIntoCandidate size: " + m.size());
+        boolean check = algorithm.checkQueueForSameNodeHasChange(m);
         double inc = m.getWeight() / m.size(); // tokens share cost of ride
-//        System.out.println("mergeMessageIntoCandidate inc: " + inc);
+//        System.out.println("Message weight: " + m.getWeight() + " Message size: " + m.size());
+//        System.out.println("inc: " + inc);
         boolean changed = false;
-        for (Token t : m) {
-//            System.out.println("mergeMessageIntoCandidate Token: " + t);
-            Node origin = t.getOrigin();
-//            System.out.println("mergeMessageIntoCandidate origin: " + origin.toString());
-            double w = t.getWeight() + inc;
-            Token curr = candidate.get(origin);
-//            System.out.println("candidate: " + candidate.toString());
-//            if (curr != null) System.out.println("mergeMessageIntoCandidate curr - 1: " + curr.toString());
-            if (curr == null || w < curr.getWeight()) {
-                // Either we don't have a token from there or the new one is better
-            	// so copy the latest one, remembering to add the (shared) weight of the last trip.
-                curr = new Token(origin, w, t.getDirection());
-//                System.out.println("mergeMessageIntoCandidate curr - 2: " + curr.toString());
-                candidate.put(origin, curr);
-//                System.out.println("mergeMessageIntoCandidate node candidate: " + candidate.toString());
-                changed = true;
+        if (!check) {
+//            System.out.println("m.getDestination() false: " + m.getDestination());
+            for (Token t : m) {
+                Node origin = t.getOrigin();
+                double w = t.getWeight() + inc;
+//                System.out.println("candidate - 1: " + this.candidateToString());
+                Token curr = candidate.get(origin);
+                if (curr == null || w < curr.getWeight()) {
+                    // Either we don't have a token from there or the new one is better
+                    // so copy the latest one, remembering to add the (shared) weight of the last trip.
+//                if (!algorithm.checkQueueForSameNodeHasChange(m)) {
+                    curr = new Token(origin, w, t.getDirection());
+                    candidate.put(origin, curr);
+//                } else {
+//                    for (Token token: algorithm.getTempTokens()) {
+//                        System.out.println("test: " + token);
+//                        candidate.put(origin, token);
+//                    }
+//                }
+                    changed = true;
+                }
+//               System.out.println("candidate - 2: " + this.candidateToString());
+            }
+            algorithm.dequeue(m);
+        } else {
+            for (Message msg : algorithm.getQ()) {
+                if (msg.getDestination() == m.getDestination()) {
+                    for (Token t : msg) {
+                        Node origin = t.getOrigin();
+                        double w;
+                        if (t.getWeight() == 0)
+                            if (t.getDirection() != null) w = t.getWeight() / 2 + inc;
+                            else w = msg.getWeight() + inc;
+                        else w = t.getWeight() + inc;
+//                        System.out.println("check candidate - 1: " + this.candidateToString());
+                        Token curr = candidate.get(origin);
+                        if (curr == null || w < curr.getWeight()) {
+                            // Either we don't have a token from there or the new one is better
+                            // so copy the latest one, remembering to add the (shared) weight of the last trip.
+                            curr = new Token(origin, w, t.getDirection());
+                            candidate.put(origin, curr);
+                            changed = true;
+                        }
+//                        System.out.println("check candidate - 2: " + this.candidateToString());
+                    }
+                    algorithm.dequeue(msg);
+                }
             }
         }
 		return changed;
@@ -125,6 +152,7 @@ public class Node {
         //
         double totalWeight = 0.0;
         for (Node n : candidate.keySet()) {
+//            System.out.println("Candidate: " + candidate.get(n));
             totalWeight += candidate.get(n).getWeight();
         }
 //        System.out.println("calculateTotalWeight: " + totalWeight);
@@ -151,10 +179,5 @@ public class Node {
         if (dir != null && dir != this) {
             dir.followTrailTo(n, results);
         }
-    }
-
-
-    public boolean anyChange(Message m) {
-        return true;
     }
 }

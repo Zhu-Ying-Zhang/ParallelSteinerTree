@@ -67,9 +67,10 @@ E 50 13 1
 END
 
 SECTION Terminals
-Terminals 2
+Terminals 3
 T 29
-T 9
+T 20
+T 14
 END
 
 EOF

@@ -10,14 +10,14 @@ import java.util.stream.Stream;
 public class ReadOrGraph {
 
 	public static void main(String[] args) throws IOException {
-		try (Stream<Path> paths = Files.walk(Paths.get("/Users/zhuyingzhang/Work/StrathclydeLife/CS957/Steiner/data/SteinerB/steinb1.txt"))) {
+		try (Stream<Path> paths = Files.walk(Paths.get("/Users/zhuyingzhang/Work/StrathclydeLife/CS957/Steiner/newData/C/c03.stp"))) {
 			paths.filter(Files::isRegularFile).sorted().forEach(filePathWithName -> {
 				Algorithm a = null;
 				OrGraph orGraph = null;
 				Set<Node> result = null;
 				try {
 					long startTime = System.currentTimeMillis();
-					orGraph = Utils.loadOrGraph(filePathWithName.toString());
+					orGraph = Utils.loadOrGraph(filePathWithName.toString(), true);
 //					System.out.println("=== GRAPH ===");
 //					System.out.println(orGraph.getGraph());
 					System.out.println("=== " + filePathWithName.getFileName() + " QUERY ===");
